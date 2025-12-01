@@ -8,33 +8,6 @@ using Unleash;
 
 namespace OpenFeature.Contrib.Providers.Unleash;
 
-/// <summary>
-/// An OpenFeature provider that integrates with Unleash feature flag management.
-/// </summary>
-/// <remarks>
-/// The Unleash provider supports boolean evaluation using <c>IsEnabled</c> and variant-based
-/// evaluation for string, integer, double, and object types using <c>GetVariant</c>.
-/// </remarks>
-/// <example>
-/// <code>
-/// var settings = new UnleashSettings
-/// {
-///     AppName = "my-app",
-///     UnleashApi = new Uri("https://unleash.example.com/api/"),
-///     CustomHttpHeaders = new Dictionary&lt;string, string&gt;
-///     {
-///         { "Authorization", "API_KEY" }
-///     }
-/// };
-/// var config = new UnleashProviderConfiguration(settings);
-/// var provider = new UnleashProvider(config);
-///
-/// await OpenFeature.Api.Instance.SetProviderAsync(provider);
-/// var client = OpenFeature.Api.Instance.GetClient();
-///
-/// var isEnabled = await client.GetBooleanValueAsync("my-feature", false);
-/// </code>
-/// </example>
 public class UnleashProvider : FeatureProvider
 {
     private static readonly Metadata ProviderMetadata = new("Unleash Provider");
@@ -43,37 +16,19 @@ public class UnleashProvider : FeatureProvider
     private readonly UnleashProviderConfiguration _configuration;
     private bool _disposed;
 
-    /// <summary>
-    /// Creates a new instance of <see cref="UnleashProvider"/> using the provided configuration.
-    /// The Unleash client will be created using the settings from the configuration.
-    /// </summary>
-    /// <param name="configuration">The provider configuration containing Unleash settings.</param>
-    /// <exception cref="ArgumentNullException">Thrown when configuration is null.</exception>
     public UnleashProvider(UnleashProviderConfiguration configuration)
     {
         _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         _unleashClient = new DefaultUnleash(configuration.UnleashSettings);
     }
 
-    /// <summary>
-    /// Creates a new instance of <see cref="UnleashProvider"/> using a pre-configured Unleash client.
-    /// Use this constructor when you need more control over the Unleash client configuration.
-    /// </summary>
-    /// <param name="unleashClient">A pre-configured Unleash client instance.</param>
-    /// <exception cref="ArgumentNullException">Thrown when unleashClient is null.</exception>
     public UnleashProvider(IUnleash unleashClient)
     {
         _unleashClient = unleashClient ?? throw new ArgumentNullException(nameof(unleashClient));
     }
 
-    /// <inheritdoc/>
     public override Metadata GetMetadata() => ProviderMetadata;
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// This method uses Unleash's <c>IsEnabled</c> to evaluate boolean flags.
-    /// The evaluation context is transformed to an Unleash context using <see cref="ContextTransformer"/>.
-    /// </remarks>
     public override Task<ResolutionDetails<bool>> ResolveBooleanValueAsync(
         string flagKey,
         bool defaultValue,
@@ -95,11 +50,6 @@ public class UnleashProvider : FeatureProvider
             flagMetadata: flagMetadata));
     }
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// String evaluation uses Unleash's variant feature. If the variant is disabled,
-    /// the default value is returned.
-    /// </remarks>
     public override Task<ResolutionDetails<string>> ResolveStringValueAsync(
         string flagKey,
         string defaultValue,
@@ -118,11 +68,6 @@ public class UnleashProvider : FeatureProvider
             flagMetadata: objectResult.FlagMetadata));
     }
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// Integer evaluation uses Unleash's variant feature. The variant payload is parsed as an integer.
-    /// If parsing fails or the variant is disabled, the default value is returned.
-    /// </remarks>
     public override Task<ResolutionDetails<int>> ResolveIntegerValueAsync(
         string flagKey,
         int defaultValue,
@@ -170,11 +115,6 @@ public class UnleashProvider : FeatureProvider
         throw new TypeMismatchException($"Failed to parse variant value as integer for flag '{flagKey}'");
     }
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// Double evaluation uses Unleash's variant feature. The variant payload is parsed as a double.
-    /// If parsing fails or the variant is disabled, the default value is returned.
-    /// </remarks>
     public override Task<ResolutionDetails<double>> ResolveDoubleValueAsync(
         string flagKey,
         double defaultValue,
@@ -222,11 +162,6 @@ public class UnleashProvider : FeatureProvider
         throw new TypeMismatchException($"Failed to parse variant value as double for flag '{flagKey}'");
     }
 
-    /// <inheritdoc/>
-    /// <remarks>
-    /// Object evaluation uses Unleash's variant feature. The variant payload is returned as a Value object.
-    /// If the variant is disabled, the default value is returned.
-    /// </remarks>
     public override Task<ResolutionDetails<Value>> ResolveStructureValueAsync(
         string flagKey,
         Value defaultValue,
@@ -283,7 +218,6 @@ public class UnleashProvider : FeatureProvider
             flagMetadata: flagMetadata);
     }
 
-    /// <inheritdoc/>
     public override Task ShutdownAsync(CancellationToken cancellationToken = default)
     {
         if (!_disposed)

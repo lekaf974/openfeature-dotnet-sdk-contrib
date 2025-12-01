@@ -7,7 +7,7 @@
     <AssemblyVersion>$(VersionNumber)</AssemblyVersion>
     <FileVersion>$(VersionNumber)</FileVersion>
     <Description>Unleash provider for OpenFeature .NET SDK</Description>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

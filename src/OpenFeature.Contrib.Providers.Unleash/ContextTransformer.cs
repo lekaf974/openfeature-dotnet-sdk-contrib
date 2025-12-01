@@ -3,46 +3,15 @@ using Unleash;
 
 namespace OpenFeature.Contrib.Providers.Unleash;
 
-/// <summary>
-/// Transforms an OpenFeature EvaluationContext into an Unleash UnleashContext.
-/// </summary>
 internal static class ContextTransformer
 {
-    /// <summary>
-    /// Well-known context key for AppName.
-    /// </summary>
     public const string ContextAppName = "AppName";
-
-    /// <summary>
-    /// Well-known context key for UserId.
-    /// </summary>
     public const string ContextUserId = "UserId";
-
-    /// <summary>
-    /// Well-known context key for Environment.
-    /// </summary>
     public const string ContextEnvironment = "Environment";
-
-    /// <summary>
-    /// Well-known context key for RemoteAddress.
-    /// </summary>
     public const string ContextRemoteAddress = "RemoteAddress";
-
-    /// <summary>
-    /// Well-known context key for SessionId.
-    /// </summary>
     public const string ContextSessionId = "SessionId";
-
-    /// <summary>
-    /// Well-known context key for CurrentTime.
-    /// </summary>
     public const string ContextCurrentTime = "CurrentTime";
 
-    /// <summary>
-    /// Transforms an OpenFeature EvaluationContext into an Unleash UnleashContext.
-    /// </summary>
-    /// <param name="context">The OpenFeature evaluation context.</param>
-    /// <returns>An Unleash context with the mapped values.</returns>
     public static UnleashContext Transform(EvaluationContext context)
     {
         if (context == null)
